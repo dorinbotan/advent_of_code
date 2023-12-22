@@ -110,5 +110,5 @@ with open(f'{dir_path}/input.txt', 'r') as f:
     result1 = count_activated(data)  # 8323
     print(result1)
 
-    result2 = find_max_activated(data)
+    result2 = find_max_activated(data)  # 8491
     print(result2)

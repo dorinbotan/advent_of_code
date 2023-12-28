@@ -37,7 +37,7 @@ def parse_rules(rules):
     return result
 
 
-def dp(rules, node='in', x=[0,4001], m=[0,4001], a=[0,4001], s=[0,4001]):
+def dp(rules, node='in', x=[1,4001], m=[1,4001], a=[1,4001], s=[1,4001]):
     if node == 'R':
         return 0
 
@@ -54,7 +54,6 @@ def dp(rules, node='in', x=[0,4001], m=[0,4001], a=[0,4001], s=[0,4001]):
         if handler['key'] is None:
             result += dp(rules, handler['direction'], x, m, a, s)
         else:
-            # Update weights depending on handler['op'] and call dp
             if handler['op'] == '<':
                 if handler['key'] == 'x':
                     result += dp(rules, handler['direction'], [x[0], min(x[1], handler['value'])], m, a, s)
@@ -85,9 +84,9 @@ def dp(rules, node='in', x=[0,4001], m=[0,4001], a=[0,4001], s=[0,4001]):
     return result
 
 
-with open(f'{dir_path}/test.txt', 'r') as f:
+with open(f'{dir_path}/input.txt', 'r') as f:
     rules = f.read().split('\n\n')[0]
     rules = parse_rules(rules)
 
     result = dp(rules)
-    print(result)
+    print(result)  # 125051049836302

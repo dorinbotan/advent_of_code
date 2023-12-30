@@ -1,4 +1,5 @@
 import os
+from math import gcd
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -44,6 +45,15 @@ class Broadcaster:
     # when a pulse is received, send it to all outputs
     def trigger(self, _, value):
         return value, self.outputs
+
+
+def lcm(values):
+    result = 1
+
+    for value in values:
+        result = result * value // gcd(result, value)
+
+    return result
 
 
 def parse_modules(modules):
@@ -122,7 +132,54 @@ def solution1(modules):
 
 
 def solution2(modules):
-    pass
+    queue = []
+
+    cnt = 0
+
+    # all 'lg' conjuncture inputs
+    dict = {
+        'vg': [],
+        'nb': [],
+        'vc': [],
+        'ls': [],
+    }
+
+    while any([len(value) == 0 for value in dict.values()]):
+        cnt += 1
+        queue.append([None, False, 'broadcaster'])
+
+        while queue:
+            input, value, module = queue.pop(0)
+
+            # The only 'rx' input is 'lg' Conjunction
+            # 'lg' would output False if all its remembered inputs are True
+            # 'lg' inputs are 'vg', 'nb', 'vc' and 'ls'
+            if module == 'rx' and not value:
+                return cnt
+
+            if module not in modules:
+                continue
+
+            # if isinstance(modules[module], Conjunction):
+            # if 'rx' in self.outputs and any(self.values.values()):
+                # print(self.values)
+
+            if module == 'lg':
+                values = modules[module].values
+
+                for key in dict.keys():
+                    if values[key] and cnt not in dict[key]:
+                        dict[key].append(cnt)
+
+            value, outputs = modules[module].trigger(input, value)
+
+            if value is None:
+                continue
+
+            for output in outputs:
+                queue.append([module, value, output])
+
+    return lcm([value[0] for value in dict.values()])
 
 
 with open(f'{dir_path}/input.txt', 'r') as f:
@@ -132,5 +189,5 @@ with open(f'{dir_path}/input.txt', 'r') as f:
     result1 = solution1(modules)  # 929810733
     print(result1)
 
-    result2 = solution2(modules)
+    result2 = solution2(modules)  # 231657829136023
     print(result2)
